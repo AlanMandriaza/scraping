@@ -1,23 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import CreatorName from './CreatorName';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
+  const creatorIds = ["evakitty_xxx", "mianextdooor", "blckmini", "at1lanta"];
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App d-flex flex-wrap justify-content-center">
+      {creatorIds.map(id => (
+        <CreatorName key={id} creatorId={id} />
+      ))}
     </div>
   );
 }
