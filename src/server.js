@@ -16,18 +16,21 @@ app.get('/getCreatorName/:creatorId', async (req, res) => {
     const page = await browser.newPage();
     await page.goto(url);
 
-    // Espera a que el elemento con el nombre y la foto del creador se cargue
+    // Espera a que el elemento con el nombre, la foto y la información adicional del creador se cargue
     await page.waitForSelector('.g-user-name');
     await page.waitForSelector('.g-avatar__img-wrapper > img'); // Selector para la imagen de perfil
+    await page.waitForSelector('.b-user-info__text'); // Selector para la información adicional del creador
 
     const result = await page.evaluate(() => {
       const nameElement = document.querySelector('.g-user-name');
       const imageElement = document.querySelector('.g-avatar__img-wrapper > img');
+      const infoElement = document.querySelector('.b-user-info__text'); // Elemento para la información adicional
 
       const name = nameElement ? nameElement.innerText : null;
       const profilePicUrl = imageElement ? imageElement.src : null;
+      const additionalInfo = infoElement ? infoElement.innerText : null; // Extrae la información adicional
 
-      return { name, profilePicUrl };
+      return { name, profilePicUrl, additionalInfo };
     });
 
     await browser.close();
