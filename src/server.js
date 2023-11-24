@@ -20,20 +20,23 @@ app.get('/getCreatorName/:creatorId', async (req, res) => {
     await page.waitForSelector('.g-user-name');
     await page.waitForSelector('.g-avatar__img-wrapper > img');
     await page.waitForSelector('.b-user-info__text');
-    await page.waitForSelector('.b-offer-join'); // Selector para el precio de la suscripción
+    await page.waitForSelector('.b-offer-join'); 
+    await page.waitForSelector('.b-tabs__nav__link__counter-title');
 
     const result = await page.evaluate(() => {
       const nameElement = document.querySelector('.g-user-name');
       const imageElement = document.querySelector('.g-avatar__img-wrapper > img');
       const infoElement = document.querySelector('.b-user-info__text');
       const subscriptionElement = document.querySelector('.b-offer-join');
+      const mediaElement = document.querySelector('.b-tabs__nav__link__counter-title');
 
       const name = nameElement ? nameElement.innerText : null;
       const profilePicUrl = imageElement ? imageElement.src : null;
       const additionalInfo = infoElement ? infoElement.innerText : null;
       const subscriptionPrice = subscriptionElement ? subscriptionElement.innerText.trim() : 'No disponible';
+      const totalElement = mediaElement ? mediaElement.innerText.trim() : 'No disponible';
 
-      return { name, profilePicUrl, additionalInfo, subscriptionPrice };
+      return { name, profilePicUrl, additionalInfo, subscriptionPrice, totalElement };
     });
 
     await browser.close();

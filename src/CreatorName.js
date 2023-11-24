@@ -7,7 +7,8 @@ function CreatorName({ creatorId }) {
     name: "",
     profilePicUrl: "",
     additionalInfo: "",
-    subscriptionPrice: ""
+    subscriptionPrice: "",
+    totalElement: "", 
   });
   const [loading, setLoading] = useState(true);
   const [showBio, setShowBio] = useState(false);
@@ -19,7 +20,8 @@ function CreatorName({ creatorId }) {
           name: response.data.name,
           profilePicUrl: response.data.profilePicUrl,
           additionalInfo: response.data.additionalInfo,
-          subscriptionPrice: extractSubscriptionPrice(response.data.subscriptionPrice)
+          subscriptionPrice: extractSubscriptionPrice(response.data.subscriptionPrice),
+          totalElement: response.data.totalElement,
         });
       })
       .catch((error) => {
@@ -28,7 +30,8 @@ function CreatorName({ creatorId }) {
           name: "Error",
           profilePicUrl: "",
           additionalInfo: "",
-          subscriptionPrice: ""
+          subscriptionPrice: "",
+          totalElement: "", 
         });
       })
       .finally(() => {
@@ -48,12 +51,14 @@ function CreatorName({ creatorId }) {
       return 'No disponible';
     }
   };
+
   const handleButtonClick = () => {
     if (creatorData.subscriptionPrice !== "No disponible") {
       const creatorUsername = creatorId.toLowerCase().replace(" ", "");
       window.open(`https://www.onlyfans.com/${creatorUsername}`, "_blank");
     }
   };
+
   return (
     <div className="card" style={{ width: '18rem' }}>
       <div className="card-body">
@@ -68,12 +73,13 @@ function CreatorName({ creatorId }) {
             {showBio && creatorData.additionalInfo && (
               <p className="card-text">{creatorData.additionalInfo}</p>
             )}
+            <p className="card-text">{creatorData.totalElement}</p> 
             <button className="button" onClick={() => setShowBio(!showBio)}>
               {showBio ? 'Ocultar Biografía' : 'Mostrar Biografía'}
             </button>
             <button
-              className="button" // Utiliza la clase CSS personalizada
-              onClick={handleButtonClick} // Maneja el clic del botón
+              className="button"
+              onClick={handleButtonClick}
             >
               Suscríbete por {creatorData.subscriptionPrice}
             </button>
