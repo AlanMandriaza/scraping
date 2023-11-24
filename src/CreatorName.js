@@ -10,7 +10,7 @@ function CreatorName({ creatorId }) {
     subscriptionPrice: ""
   });
   const [loading, setLoading] = useState(true);
-  const [showBio, setShowBio] = useState(false); // Estado para mostrar/ocultar la biografía
+  const [showBio, setShowBio] = useState(false);
 
   useEffect(() => {
     axios.get(`http://localhost:5000/getCreatorName/${creatorId}`)
@@ -36,20 +36,24 @@ function CreatorName({ creatorId }) {
       });
   }, [creatorId]);
 
-  // Función para extraer el valor de la suscripción
   const extractSubscriptionPrice = (subscriptionText) => {
-    const regex = /\$\d+(\.\d{2})?/; // Busca el formato $x.xx
+    const regex = /\$\d+(\.\d{2})?/;
     const match = subscriptionText.match(regex);
 
     if (match) {
-      return match[0]; // Devuelve el valor encontrado
+      return match[0];
     } else if (subscriptionText.toLowerCase().includes('gratis')) {
-      return 'Gratis'; // Si contiene "gratis", devuelve "Gratis"
+      return 'Gratis';
     } else {
-      return 'No disponible'; // Valor predeterminado si no se encuentra
+      return 'No disponible';
     }
   };
-
+  const handleButtonClick = () => {
+    if (creatorData.subscriptionPrice !== "No disponible") {
+      const creatorUsername = creatorId.toLowerCase().replace(" ", "");
+      window.open(`https://www.onlyfans.com/${creatorUsername}`, "_blank");
+    }
+  };
   return (
     <div className="card" style={{ width: '18rem' }}>
       <div className="card-body">
@@ -61,17 +65,18 @@ function CreatorName({ creatorId }) {
             {creatorData.profilePicUrl && (
               <img src={creatorData.profilePicUrl} alt="Foto de perfil del creador" className="card-img-top" />
             )}
-            <button className="button" onClick={() => setShowBio(!showBio)}>
-              {showBio ? 'Ocultar Biografía' : 'Mostrar Biografía'}
-            </button>
             {showBio && creatorData.additionalInfo && (
               <p className="card-text">{creatorData.additionalInfo}</p>
             )}
-            
-            <button className="button">
+            <button className="button" onClick={() => setShowBio(!showBio)}>
+              {showBio ? 'Ocultar Biografía' : 'Mostrar Biografía'}
+            </button>
+            <button
+              className="button" // Utiliza la clase CSS personalizada
+              onClick={handleButtonClick} // Maneja el clic del botón
+            >
               Suscríbete por {creatorData.subscriptionPrice}
             </button>
-
           </>
         )}
       </div>
