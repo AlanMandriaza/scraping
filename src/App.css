@@ -1,6 +1,25 @@
-/* App.css */
-.card {
-  /* Tus estilos personalizados aquí */
-  margin: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.button {
+  background-color: #00AFF0;
+  color: white;
+  border: 1px solid #00AFF0;
+  padding: 3px 13px;
+  margin: 10px auto;
+  display: block;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 12px;
+  cursor: pointer; /* Cambia el cursor al pasar por encima del botón */
+}
+
+/* Estilos adicionales para el botón de Mostrar/Ocultar Biografía si lo deseas */
+.button-bio {
+  background-color: #00AFF0;
+  color: white;
+  border: 1px solid #00AFF0;
+  padding: 3px 13px;
+  margin: 10px auto;
+  display: block;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 12px;
 }

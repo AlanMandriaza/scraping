@@ -16,21 +16,24 @@ app.get('/getCreatorName/:creatorId', async (req, res) => {
     const page = await browser.newPage();
     await page.goto(url);
 
-    // Espera a que el elemento con el nombre, la foto y la información adicional del creador se cargue
+    // Espera a que los elementos con la información del creador se carguen
     await page.waitForSelector('.g-user-name');
-    await page.waitForSelector('.g-avatar__img-wrapper > img'); // Selector para la imagen de perfil
-    await page.waitForSelector('.b-user-info__text'); // Selector para la información adicional del creador
+    await page.waitForSelector('.g-avatar__img-wrapper > img');
+    await page.waitForSelector('.b-user-info__text');
+    await page.waitForSelector('.b-offer-join'); // Selector para el precio de la suscripción
 
     const result = await page.evaluate(() => {
       const nameElement = document.querySelector('.g-user-name');
       const imageElement = document.querySelector('.g-avatar__img-wrapper > img');
-      const infoElement = document.querySelector('.b-user-info__text'); // Elemento para la información adicional
+      const infoElement = document.querySelector('.b-user-info__text');
+      const subscriptionElement = document.querySelector('.b-offer-join');
 
       const name = nameElement ? nameElement.innerText : null;
       const profilePicUrl = imageElement ? imageElement.src : null;
-      const additionalInfo = infoElement ? infoElement.innerText : null; // Extrae la información adicional
+      const additionalInfo = infoElement ? infoElement.innerText : null;
+      const subscriptionPrice = subscriptionElement ? subscriptionElement.innerText.trim() : 'No disponible';
 
-      return { name, profilePicUrl, additionalInfo };
+      return { name, profilePicUrl, additionalInfo, subscriptionPrice };
     });
 
     await browser.close();
