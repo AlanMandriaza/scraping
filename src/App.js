@@ -1,9 +1,9 @@
 import React from 'react';
 import CreatorName from './CreatorName';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
-  const creatorIds = ["evakitty_xxx", "mianextdooor", "blckmini", "at1lanta"];
+  const creatorIds = ["evakitty_xxx", "mianextdooor", "may_judy", "at1lanta", "divacherry", "liliflower2002", "sandy_mell_rose", "sabri_di", "gina-gerson", "jadejuice", "kamillavanilla"];
 
   return (
     <div className="App d-flex flex-wrap justify-content-center">

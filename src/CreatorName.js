@@ -24,19 +24,19 @@ function CreatorName({ creatorId }) {
   }, [creatorId]);
 
   return (
-    <div>
-      {loading ? (
-        <p>Cargando...</p>
-      ) : (
-        <>
-          <h1>{creatorData.name}</h1>
-          {creatorData.profilePicUrl && (
-            <>
-              <img src={creatorData.profilePicUrl} alt="Foto de perfil del creador" />
-            </>
-          )}
-        </>
-      )}
+    <div className="card" style={{ width: '18rem' }}> 
+      <div className="card-body">
+        {loading ? (
+          <p className="card-text">Cargando...</p>
+        ) : (
+          <>
+            <h4 className="card-title">{creatorData.name}</h4>
+            {creatorData.profilePicUrl && (
+              <img src={creatorData.profilePicUrl} alt="Foto de perfil del creador" className="card-img-top" />
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }

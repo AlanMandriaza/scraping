@@ -1,9 +1,6 @@
-.creator-card {
-  margin: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.creator-card img {
-  height: 300px; /* O un valor que se adapte a tus necesidades */
-  object-fit: cover; /* Para mantener la relación de aspecto */
+/* App.css */
+.card {
+  /* Tus estilos personalizados aquí */
+  margin: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
