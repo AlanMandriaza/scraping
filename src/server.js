@@ -1,14 +1,27 @@
 const express = require('express');
 const cors = require('cors');
 const puppeteer = require('puppeteer');
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
+const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
+const { fromIni } = require('@aws-sdk/credential-provider-ini');
 
 const app = express();
 const port = 5000;
+const AWS = require('aws-sdk');
+
+// Configura las credenciales de AWS (AWS SDK v2)
+AWS.config.update({
+  region: 'us-east-2',
+  accessKeyId: 'AKIA2AX2QNKV3WCCT6UP',
+  secretAccessKey: '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',
+});
 
 app.use(cors());
+
+// Create a DynamoDB client (AWS SDK v3)
+const dynamoDbClient = new DynamoDBClient({
+  region: 'us-east-2',
+  credentials: fromIni({ profile: 'Alan' }), // Replace with your AWS profile name or provide credentials directly
+});
 
 app.get('/getCreatorName/:creatorId', async (req, res) => {
   try {
@@ -48,30 +61,32 @@ app.get('/getCreatorName/:creatorId', async (req, res) => {
       throw new Error('Información del creador no encontrada');
     }
 
-    // Descargar y guardar la imagen
-    if (result.profilePicUrl) {
-      const imageUrl = result.profilePicUrl;
-      const imageFileName = `${result.name}.jpg`;
-      const imagePath = path.join(__dirname, 'profile_pics', imageFileName); // Ruta para guardar la imagen en /src/profile_pics
+    // Define los datos a guardar en la tabla de DynamoDB
+    const params = {
+      TableName: 'creator', // Reemplaza 'NombreDeTuTabla' con el nombre de tu tabla en DynamoDB
+      Item: {
+        "creatorID": { S: creatorId },
+        "additionalInfo": { S: result.additionalInfo },
+        "name": { S: result.name },
+        "profilePicUrl": { S: result.profilePicUrl },
+        "subscriptionPrice": { S: result.subscriptionPrice },
+        "totalElement": { S: result.totalElement }
+      },
+    };
 
-      // Descarga la imagen utilizando axios
-      const response = await axios.get(imageUrl, { responseType: 'stream' });
+    // Utiliza el comando PutItemCommand para guardar los datos en la tabla de DynamoDB
+    const putItemCommand = new PutItemCommand(params);
 
-      // Guarda la imagen en el sistema de archivos local
-      const imageStream = response.data;
-      const writer = fs.createWriteStream(imagePath);
-      imageStream.pipe(writer);
-
-      // Espera a que se complete la escritura antes de continuar
-      await new Promise((resolve, reject) => {
-        writer.on('finish', resolve);
-        writer.on('error', reject);
-      });
-
-      console.log(`Imagen guardada como: ${imagePath}`);
+    try {
+      const response = await dynamoDbClient.send(putItemCommand);
+      console.log("Guardado exitosamente en DynamoDB", response);
+    } catch (err) {
+      console.error("Error al guardar en DynamoDB", err);
     }
 
+    // Enviar la respuesta al cliente
     res.json(result);
+
   } catch (error) {
     console.error('Error al obtener la información del creador:', error);
     res.status(500).json({ error: 'Error al obtener la información del creador' });
