@@ -7,10 +7,10 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Reemplace 'http://localhost:5000/getCreatorIds' con la URL de su servidor Express
+    
     const fetchCreatorIds = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/getCreatorIds');
+        const response = await axios.get('http://localhost:5001/getCreatorIds');
         setCreatorIds(response.data.creatorIds);
         setError(null); // Limpiar cualquier error anterior
       } catch (error) {

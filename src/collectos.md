@@ -8,41 +8,55 @@ function CreatorName({ creatorId }) {
     profilePicUrl: "",
     additionalInfo: "",
     subscriptionPrice: "",
-    totalElement: "",
+    totalElement: "", 
   });
   const [loading, setLoading] = useState(true);
   const [showBio, setShowBio] = useState(false);
 
   useEffect(() => {
-    // Esta solicitud obtiene datos del servidor Express definido en amazon.js
-    axios.get(`http://localhost:5001/getCreatorData/${creatorId}`)
+    axios.get(`http://localhost:5000/getCreatorName/${creatorId}`)
       .then((response) => {
         setCreatorData({
           name: response.data.name,
           profilePicUrl: response.data.profilePicUrl,
           additionalInfo: response.data.additionalInfo,
-          subscriptionPrice: response.data.subscriptionPrice,
+          subscriptionPrice: extractSubscriptionPrice(response.data.subscriptionPrice),
           totalElement: response.data.totalElement,
         });
       })
       .catch((error) => {
         console.error("Error al obtener la información del creador:", error);
-        // Manejo de errores en caso de fallo en la solicitud
         setCreatorData({
           name: "Error",
           profilePicUrl: "",
           additionalInfo: "",
           subscriptionPrice: "",
-          totalElement: "",
+          totalElement: "", 
         });
       })
       .finally(() => {
-        setLoading(false); // Finalizar el estado de carga
+        setLoading(false);
       });
-  }, [creatorId]); // La dependencia es creatorId
+  }, [creatorId]);
 
-  const handleBioToggle = () => {
-    setShowBio(!showBio); // Alternar la visibilidad de la biografía
+  const extractSubscriptionPrice = (subscriptionText) => {
+    const regex = /\$\d+(\.\d{2})?/;
+    const match = subscriptionText.match(regex);
+
+    if (match) {
+      return match[0];
+    } else if (subscriptionText.toLowerCase().includes('gratis')) {
+      return 'Gratis';
+    } else {
+      return 'No disponible';
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (creatorData.subscriptionPrice !== "No disponible") {
+      const creatorUsername = creatorId.toLowerCase().replace(" ", "");
+      window.open(`https://www.onlyfans.com/${creatorUsername}`, "_blank");
+    }
   };
 
   return (
@@ -59,11 +73,14 @@ function CreatorName({ creatorId }) {
             {showBio && creatorData.additionalInfo && (
               <p className="card-text">{creatorData.additionalInfo}</p>
             )}
-            <p className="card-text">Elementos totales: {creatorData.totalElement}</p>
-            <button className="button" onClick={handleBioToggle}>
+            <p className="card-text">{creatorData.totalElement}</p> 
+            <button className="button" onClick={() => setShowBio(!showBio)}>
               {showBio ? 'Ocultar Biografía' : 'Mostrar Biografía'}
             </button>
-            <button className="button">
+            <button
+              className="button"
+              onClick={handleButtonClick}
+            >
               Suscríbete por {creatorData.subscriptionPrice}
             </button>
           </>

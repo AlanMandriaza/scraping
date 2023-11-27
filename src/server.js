@@ -1,31 +1,32 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
 const puppeteer = require('puppeteer');
-const { DynamoDBClient, PutItemCommand, ScanCommand } = require('@aws-sdk/client-dynamodb');
+const fs = require('fs');
+const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { fromIni } = require('@aws-sdk/credential-provider-ini');
 const AWS = require('aws-sdk');
+const { getCreatorIds } = require('./dynamodbOperations'); // Asegúrate de que este archivo exista
+
+// Leer la configuración
 const configPath = '../config.json';
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
-
-
-// AWS Configuration (AWS SDK v2)
+// Configuración de AWS (AWS SDK v2)
 AWS.config.update({
   region: config.region,
   accessKeyId: config.accessKeyId,
   secretAccessKey: config.secretAccessKey
 });
 
-// Create Express App
+// Crear aplicación Express
 const app = express();
 const port = 5000;
 
 app.use(cors());
 
-// Create a DynamoDB client (AWS SDK v3)
+// Crear cliente de DynamoDB (AWS SDK v3)
 const dynamoDbClient = new DynamoDBClient({
-  region: 'us-east-2',
+  region: config.region,
   credentials: fromIni({ profile: 'Alan' }),
 });
 
@@ -97,17 +98,10 @@ app.get('/getCreatorName/:creatorId', async (req, res) => {
   }
 });
 
-// Endpoint to Get All Creator IDs from DynamoDB
-
+// Endpoint para obtener todos los IDs de creadores de DynamoDB
 app.get('/getCreatorIds', async (req, res) => {
   try {
-    const params = {
-      TableName: 'url', // Reemplaza 'url' con el nombre de tu tabla en DynamoDB
-    };
-    
-    const data = await dynamoDbClient.send(new ScanCommand(params));
-    const creatorIds = data.Items.map(item => item.creatorID.S);
-
+    const creatorIds = await getCreatorIds('url'); // Usar el nombre de tu tabla DynamoDB
     res.json({ creatorIds });
   } catch (error) {
     console.error('Error:', error);
@@ -115,8 +109,7 @@ app.get('/getCreatorIds', async (req, res) => {
   }
 });
 
-
-// Start the Server
+// Iniciar el servidor
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
